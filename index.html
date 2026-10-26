@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow | To-Do List</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6ff;
+      color: #19233b;
+      min-height: 100vh;
+      padding: 40px 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 620px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 22px;
+      box-shadow: 0 15px 45px rgba(35, 55, 100, 0.1);
+    }
+
+    .eyebrow {
+      color: #4169e1;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid #dce2ef;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #4169e1;
+      box-shadow: 0 0 0 3px #4169e120;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .add-btn {
+      padding: 0 20px;
+      color: white;
+      background: #4169e1;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      flex: 1;
+      background: #f4f6ff;
+      padding: 14px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 23px;
+      color: #4169e1;
+    }
+
+    .stat span {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .list-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 10px;
+    }
+
+    .clear-btn {
+      color: #d14343;
+      background: #fff0f0;
+      padding: 9px 12px;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 12px;
+      border: 1px solid #e8ebf3;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .task input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #4169e1;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .task-text {
+      flex: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .task.completed .task-text {
+      text-decoration: line-through;
+      color: #9299a8;
+    }
+
+    .delete-btn {
+      background: #fff0f0;
+      color: #d14343;
+      padding: 9px 11px;
+      flex-shrink: 0;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 28px 10px;
+      color: #7b8497;
+      border: 1px dashed #dce2ef;
+      border-radius: 12px;
+    }
+
+    .footer {
+      text-align: center;
+      color: #8a92a3;
+      font-size: 12px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 480px) {
+      .app {
+        padding: 22px 16px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .input-area {
+        flex-direction: column;
+      }
+
+      .add-btn {
+        padding: 13px;
+      }
+
+      .stats {
+        gap: 7px;
+      }
+
+      .stat {
+        padding: 11px 5px;
+      }
+
+      .task {
+        gap: 8px;
+        padding: 12px 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <p class="eyebrow">YOUR PERSONAL TASK MANAGER</p>
+    <h1>TaskFlow ✨</h1>
+    <p class="subtitle">
+      Organize your day, one task at a time. Your tasks stay saved
+      even when you refresh the page.
+    </p>
+
+    <form class="input-area" id="task-form">
+      <input
+        id="task-input"
+        type="text"
+        placeholder="What do you need to do?"
+        aria-label="New task"
+        maxlength="200"
+        required
+      >
+      <button class="add-btn" type="submit">+ Add Task</button>
+    </form>
+
+    <div class="stats">
+      <div class="stat">
+        <strong id="total-count">0</strong>
+        <span>Total Tasks</span>
+      </div>
+      <div class="stat">
+        <strong id="pending-count">0</strong>
+        <span>Pending</span>
+      </div>
+      <div class="stat">
+        <strong id="done-count">0</strong>
+        <span>Completed</span>
+      </div>
+    </div>
+
+    <div class="list-heading">
+      <h2>Your Tasks</h2>
+      <button class="clear-btn" id="clear-completed" type="button">
+        Clear Completed
+      </button>
+    </div>
+
+    <ul id="task-list" aria-live="polite"></ul>
+
+    <p class="footer">
+      Made with HTML, CSS & JavaScript · Powered by LocalStorage
+    </p>
+  </main>
+
+  <script>
+    const form = document.getElementById("task-form");
+    const input = document.getElementById("task-input");
+    const taskList = document.getElementById("task-list");
+
+    const totalCount = document.getElementById("total-count");
+    const pendingCount = document.getElementById("pending-count");
+    const doneCount = document.getElementById("done-count");
+    const clearCompletedButton =
+      document.getElementById("clear-completed");
+
+    let tasks = [];
+
+    // Load saved tasks when the page opens.
+    try {
+      const savedTasks = JSON.parse(
+        localStorage.getItem("taskflow-tasks") || "[]"
+      );
+
+      if (Array.isArray(savedTasks)) {
+        tasks = savedTasks.filter(task =>
+          task &&
+          typeof task.id === "string" &&
+          typeof task.text === "string" &&
+          typeof task.completed === "boolean"
+        );
+      }
+    } catch (error) {
+      tasks = [];
+    }
+
+    // Save the latest tasks in the browser.
+    function saveTasks() {
+      try {
+        localStorage.setItem("taskflow-tasks", JSON.stringify(tasks));
+      } catch (error) {
+        alert("Tasks could not be saved. Check your browser storage.");
+      }
+    }
+
+    // Display tasks and update statistics.
+    function renderTasks() {
+      taskList.replaceChildren();
+
+      totalCount.textContent = tasks.length;
+      pendingCount.textContent =
+        tasks.filter(task => !task.completed).length;
+      doneCount.textContent =
+        tasks.filter(task => task.completed).length;
+
+      clearCompletedButton.disabled =
+        !tasks.some(task => task.completed);
+
+      if (tasks.length === 0) {
+        const emptyMessage = document.createElement("li");
+        emptyMessage.className = "empty";
+        emptyMessage.textContent =
+          "No tasks yet. Add your first task above! 🌱";
+        taskList.appendChild(emptyMessage);
+        return;
+      }
+
+      tasks.forEach(task => {
+        const li = document.createElement("li");
+        li.className = task.completed ? "task completed" : "task";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = task.completed;
+        checkbox.setAttribute(
+          "aria-label",
+          "Mark " + task.text + " as completed"
+        );
+
+        checkbox.addEventListener("change", () => {
+          task.completed = checkbox.checked;
+          saveTasks();
+          renderTasks();
+        });
+
+        const text = document.createElement("span");
+        text.className = "task-text";
+        text.textContent = task.text;
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "delete-btn";
+        deleteButton.textContent = "Delete";
+        deleteButton.setAttribute(
+          "aria-label",
+          "Delete " + task.text
+        );
+
+        deleteButton.addEventListener("click", () => {
+          tasks = tasks.filter(item => item.id !== task.id);
+          saveTasks();
+          renderTasks();
+        });
+
+        li.append(checkbox, text, deleteButton);
+        taskList.appendChild(li);
+      });
+    }
+
+    // Add a task when the form is submitted.
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const text = input.value.trim();
+
+      if (!text) {
+        input.focus();
+        return;
+      }
+
+      tasks.push({
+        id: Date.now().toString() + "-" +
+          Math.random().toString(36).slice(2),
+        text: text,
+        completed: false
+      });
+
+      saveTasks();
+      renderTasks();
+
+      form.reset();
+      input.focus();
+    });
+
+    // Remove all completed tasks.
+    clearCompletedButton.addEventListener("click", () => {
+      tasks = tasks.filter(task => !task.completed);
+      saveTasks();
+      renderTasks();
+    });
+
+    // Display previously saved tasks.
+    renderTasks();
+  </script>
+</body>
+</html>
